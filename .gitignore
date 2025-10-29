@@ -1,0 +1,117 @@
+# ==========================
+# Python & Django Defaults
+# ==========================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+static_root/
+local_settings.py
+
+# Django migration cache
+*/migrations/__pycache__/
+*/migrations/*.pyc
+*/migrations/*.pyo
+
+# ==========================
+# Environment & Secrets
+# ==========================
+.env
+.env.local
+.env.*.local
+*.env
+/secrets.json
+
+# ==========================
+# OS Specific
+# ==========================
+.DS_Store
+Thumbs.db
+
+# ==========================
+# IDEs & Editors
+# ==========================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# ==========================
+# Virtual Environment
+# ==========================
+venv/
+env/
+ENV/
+.venv/
+
+# ==========================
+# Build / Packaging
+# ==========================
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==========================
+# Pytest / Coverage
+# ==========================
+.coverage
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+htmlcov/
+
+# ==========================
+# Logs / Temp files
+# ==========================
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.orig
+
+# ==========================
+# Media & Uploaded Files
+# ==========================
+/uploads/
+/media/
+
+# ==========================
+# Node / Frontend (if using React or Next.js with Django)
+# ==========================
+node_modules/
+npm-debug.log
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+pnpm-lock.yaml
+
+# ==========================
+# VS Code Local History
+# ==========================
+.history/
