@@ -1,0 +1,35 @@
+$green: #00C853;
+$blue: #2962FF;
+
+body{
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: #555555;
+}
+
+.btn{
+    display: inline-block;
+    padding: 10px 30px;
+}
+.btn-green{
+    background-color: $green;
+    color: white;
+    border-radius: 30px;
+    text-decoration: none;
+    &:hover{
+        background-color: darken($green, 10%);
+    }
+}
+.btn-grren-outline{
+    background-color: transparent;
+    color: $green;
+    border: 2px solid $green;
+    border-radius: 30px;
+    text-decoration: none;
+    &:hover{
+        background-color: $green;
+        color: white;
+    }
+}

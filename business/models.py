@@ -64,7 +64,7 @@ class Business(models.Model):
     
     # Business Details
     established_year = models.PositiveIntegerField(blank=True, null=True)
-    working_hours = models.JSONField(default=dict, blank=True)  
+    working_hours = models.JSONField(default=dict, blank=True, null=True)  
     # Example: {"Mon-Fri": "9 AM - 8 PM", "Sat": "10 AM - 6 PM", "Sun": "Closed"}
    
     # Verification & Status
