@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<h2>Blank page</h2>
+<form id="workingHoursForm">
+    <div id="daysContainer"></div>
+    <button type="submit">Save Working Hours</button>
+</form>
+
+<h3>JSON Output:</h3>
+<pre id="output"></pre>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    const container = document.getElementById("daysContainer");
+
+    // Generate dropdown options for hours and minutes
+    function createTimeSelect(namePrefix, type) {
+        const wrapper = document.createElement("span");
+
+        const hourSelect = document.createElement("select");
+        hourSelect.name = `${namePrefix}_${type}_hour`;
+        for (let h = 0; h < 24; h++) {
+            const option = document.createElement("option");
+            option.value = h.toString().padStart(2, '0');
+            option.textContent = h.toString().padStart(2, '0');
+            hourSelect.appendChild(option);
+        }
+
+        const minuteSelect = document.createElement("select");
+        minuteSelect.name = `${namePrefix}_${type}_minute`;
+        [0, 15, 30, 45].forEach(m => {
+            const option = document.createElement("option");
+            option.value = m.toString().padStart(2, '0');
+            option.textContent = m.toString().padStart(2, '0');
+            minuteSelect.appendChild(option);
+        });
+
+        wrapper.appendChild(hourSelect);
+        wrapper.appendChild(document.createTextNode(":"));
+        wrapper.appendChild(minuteSelect);
+        return wrapper;
+    }
+
+    // Create day rows
+    days.forEach(day => {
+        const row = document.createElement("div");
+        row.classList.add("day-row");
+
+        const label = document.createElement("label");
+        label.textContent = day.charAt(0).toUpperCase() + day.slice(1);
+        label.style.width = "90px";
+
+        const openTime = createTimeSelect(day, "open");
+        const closeTime = createTimeSelect(day, "close");
+
+        const closedCheckbox = document.createElement("input");
+        closedCheckbox.type = "checkbox";
+        closedCheckbox.name = `${day}_closed`;
+        const closedLabel = document.createElement("label");
+        closedLabel.textContent = "Closed";
+        closedLabel.prepend(closedCheckbox);
+
+        const open24Checkbox = document.createElement("input");
+        open24Checkbox.type = "checkbox";
+        open24Checkbox.name = `${day}_open24`;
+        const open24Label = document.createElement("label");
+        open24Label.textContent = "Open 24 Hours";
+        open24Label.prepend(open24Checkbox);
+
+        row.appendChild(label);
+        row.appendChild(openTime);
+        row.appendChild(document.createTextNode(" to "));
+        row.appendChild(closeTime);
+        row.appendChild(open24Label);
+        row.appendChild(closedLabel);
+        container.appendChild(row);
+
+        // Handle checkbox behavior
+        open24Checkbox.addEventListener("change", () => {
+            const disabled = open24Checkbox.checked;
+            closedCheckbox.disabled = disabled;
+            openTime.querySelectorAll("select").forEach(sel => sel.disabled = disabled);
+            closeTime.querySelectorAll("select").forEach(sel => sel.disabled = disabled);
+        });
+
+        closedCheckbox.addEventListener("change", () => {
+            const disabled = closedCheckbox.checked;
+            open24Checkbox.disabled = disabled;
+            openTime.querySelectorAll("select").forEach(sel => sel.disabled = disabled);
+            closeTime.querySelectorAll("select").forEach(sel => sel.disabled = disabled);
+        });
+    });
+
+    // Form submission
+    document.getElementById("workingHoursForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const workingHours = {};
+
+        days.forEach(day => {
+            const isClosed = formData.get(`${day}_closed`) === "on";
+            const isOpen24 = formData.get(`${day}_open24`) === "on";
+            const open = formData.get(`${day}_open_hour`) + ":" + formData.get(`${day}_open_minute`);
+            const close = formData.get(`${day}_close_hour`) + ":" + formData.get(`${day}_close_minute`);
+
+            workingHours[day] = {
+                open: isClosed || isOpen24 ? null : open,
+                close: isClosed || isOpen24 ? null : close,
+                is_closed: isClosed,
+                is_open_24: isOpen24
+            };
+        });
+
+        document.getElementById("output").textContent = JSON.stringify(workingHours, null, 2);
+    });
+</script>
+{% endblock extra_js %}
