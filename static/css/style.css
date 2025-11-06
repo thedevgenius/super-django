@@ -4,6 +4,7 @@ body {
   font-family: "Inter", sans-serif;
   font-size: 16px;
   color: #555555;
+  overflow-x: hidden;
 }
 
 .btn {
@@ -31,4 +32,18 @@ body {
 .btn-grren-outline:hover {
   background-color: #00C853;
   color: white;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 15px;
+  height: 50px;
+  border: 1px solid #CCCCCC;
+  border-radius: 30px;
+  color: #555555;
+}
+
+.input:focus {
+  outline: none;
+  border: 1px solid #2962FF;
 }/*# sourceMappingURL=style.css.map */

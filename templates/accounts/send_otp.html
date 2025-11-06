@@ -2,10 +2,149 @@
 {% block content %}
 <div class="max-w-sm mx-auto mt-10 bg-white shadow p-6 rounded">
     <h2 class="text-xl font-bold mb-4">Login / Register</h2>
-    <form method="post">
+    <!-- <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded">Send OTP</button>
-    </form>
+    </form> -->
+
+    
+    <br>
+    
+    <input type="text" id="phone-number" class="input" placeholder="Enter phone number (e.g., +123456789)">
+    <button id="send-otp-btn" class="btn btn-green">Send OTP</button>
+    <br><br>
+
+    <div id="recaptcha-container"></div>
+
+    <br><br>
+    
+    <input type="text" id="otp-code" placeholder="Enter OTP">
+    <button id="verify-otp-btn">Verify OTP & Login</button>
+    
+    <p id="status-message"></p>
 </div>
 {% endblock %}
+
+
+{% block extra_js %}
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script>
+        // --- 1. Initialize Firebase ---
+        // !! Replace with your app's config from Step 1 !!
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8gC4YFyDgluuqqPT1vsW7Ixnv5Cs1YeE",
+            authDomain: "cominity-9cb80.firebaseapp.com",
+            projectId: "cominity-9cb80",
+            storageBucket: "cominity-9cb80.firebasestorage.app",
+            messagingSenderId: "188872172539",
+            appId: "1:188872172539:web:71329f1b9eb073e919615e",
+            measurementId: "G-2797M4MWRN"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // --- 2. Set up reCAPTCHA ---
+        window.onload = function () {
+            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                'size': 'normal',
+                'callback': (response) => {
+                    // reCAPTCHA solved, allow send OTP.
+                }
+            });
+
+            // Render the reCAPTCHA and save the widgetID
+            window.recaptchaVerifier.render().then((widgetId) => {
+                window.recaptchaWidgetId = widgetId;
+                console.log("reCAPTCHA rendered, widget ID:", widgetId);
+            }).catch((error) => {
+                console.error("reCAPTCHA render error:", error);
+            });
+        };
+
+        const sendOtpBtn = document.getElementById('send-otp-btn');
+        const verifyOtpBtn = document.getElementById('verify-otp-btn');
+        const phoneNumberInput = document.getElementById('phone-number');
+        const otpInput = document.getElementById('otp-code');
+        const statusMessage = document.getElementById('status-message');
+
+        // --- 3. Send OTP Function ---
+        sendOtpBtn.addEventListener('click', () => {
+            const phoneNumber = phoneNumberInput.value;
+            const appVerifier = window.recaptchaVerifier;
+
+            auth.signInWithPhoneNumber(phoneNumber, appVerifier)
+                .then((confirmationResult) => {
+                    // SMS sent. Save confirmation result to verify later
+                    window.confirmationResult = confirmationResult;
+                    statusMessage.textContent = 'OTP sent! Check your phone.';
+                    console.log("OTP sent");
+                }).catch((error) => {
+                    // Error; SMS not sent
+                    statusMessage.textContent = 'Error: ' + error.message;
+                    console.error("Error sending OTP", error);
+                    // Reset reCAPTCHA
+                    grecaptcha.reset(window.recaptchaWidgetId);
+                });
+        });
+
+        // --- 4. Verify OTP and Send Token to Django ---
+        verifyOtpBtn.addEventListener('click', () => {
+            const code = otpInput.value;
+            if (!window.confirmationResult) {
+                statusMessage.textContent = 'Please send OTP first.';
+                return;
+            }
+
+            window.confirmationResult.confirm(code).then((result) => {
+                // User signed in successfully.
+                const user = result.user;
+                statusMessage.textContent = 'Success! Verifying with backend...';
+
+                // --- 5. Get ID Token and Send to Django ---
+                user.getIdToken(true).then((idToken) => {
+                    // Send this token to your Django backend via fetch
+                    sendTokenToBackend(idToken);
+                }).catch((error) => {
+                    statusMessage.textContent = 'Error getting token: ' + error.message;
+                });
+
+            }).catch((error) => {
+                // User couldn't sign in (e.g., wrong code)
+                statusMessage.textContent = 'Error: Invalid OTP or session expired.';
+                console.error("Verification failed", error);
+            });
+        });
+
+        function sendTokenToBackend(idToken) {
+            // Get the CSRF token for Django
+            const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
+
+            fetch('/api/login/firebase/', { // Your Django API endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify({ 'idToken': idToken })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Backend response:', data);
+                    if (data.status === 'success') {
+                        statusMessage.textContent = 'Login successful! Redirecting...';
+                        // Redirect to a members-only page
+                        window.location.href = '/dashboard/';
+                    } else {
+                        statusMessage.textContent = 'Backend verification failed.';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error sending token to backend:', error);
+                    statusMessage.textContent = 'Error communicating with server.';
+                });
+        }
+    </script>
+{% endblock extra_js %}

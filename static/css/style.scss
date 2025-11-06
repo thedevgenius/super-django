@@ -7,6 +7,7 @@ body{
     font-family: 'Inter', sans-serif;
     font-size: 16px;
     color: #555555;
+    overflow-x: hidden;
 }
 
 .btn{
@@ -32,4 +33,17 @@ body{
         background-color: $green;
         color: white;
     }
+}
+
+.input{
+    width: 100%;
+    padding: 10px 15px;
+    height: 50px;
+    border: 1px solid #CCCCCC;
+    border-radius: 30px;
+    color: #555555;
+}
+.input:focus{
+    outline: none;
+    border: 1px solid $blue;
 }
