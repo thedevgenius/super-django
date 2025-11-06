@@ -9,3 +9,6 @@ class HomePage(TemplateView):
 
 class BlankPage(TemplateView):
     template_name = 'home/blank.html'
+
+class LocationPage(TemplateView):
+    template_name = 'home/location.html'

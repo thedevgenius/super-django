@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container mx-auto">
+    <div class="px-4 mt-5">
+        <h2>Get Location from Google Maps API</h2>
+
+        <button id="getLocationBtn">Get My Location</button>
+        <p id="status"></p>
+        <p><strong>Latitude:</strong> <span id="lat"></span></p>
+        <p><strong>Longitude:</strong> <span id="lng"></span></p>
+        <p><strong>Address:</strong> <span id="address"></span></p>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block extra_js %}
+<script>
+    const btn = document.getElementById("getLocationBtn");
+    const status = document.getElementById("status");
+    const latText = document.getElementById("lat");
+    const lngText = document.getElementById("lng");
+    const addressText = document.getElementById("address");
+
+    btn.addEventListener("click", () => {
+        if (navigator.geolocation) {
+            status.textContent = "Fetching location...";
+            navigator.geolocation.getCurrentPosition(success, error);
+        } else {
+            status.textContent = "Geolocation is not supported by your browser.";
+        }
+    });
+
+    async function success(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        latText.textContent = lat;
+        lngText.textContent = lng;
+
+        // Replace with your actual Google Maps API key
+        const apiKey = "YOUR_GOOGLE_MAPS_API_KEY";
+
+        try {
+            status.textContent = "Fetching address...";
+            const response = await fetch(
+                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyC3mNT02ooGBr5NcWGUMb-cyNpVMJWG-Uc`
+            );
+            const data = await response.json();
+
+            if (data.status === "OK") {
+                const address = data.results[0].formatted_address;
+                addressText.textContent = address;
+                status.textContent = "Success!";
+            } else {
+                status.textContent = "Unable to get address.";
+                addressText.textContent = data.error_message || "No address found.";
+            }
+        } catch (err) {
+            console.error(err);
+            status.textContent = "Error fetching address.";
+        }
+    }
+
+    function error(err) {
+        status.textContent = `Error: ${err.message}`;
+    }
+</script>
+{% endblock extra_js %}
