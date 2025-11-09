@@ -5,7 +5,8 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title> {% block title %} SuperApp {% endblock title %}</title>
+	<title> {% block title %} Cominity {% endblock title %}</title>
+	<link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
@@ -13,19 +14,166 @@
 	<link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
-<body>
+<body class="{% block body_bg %}bg-white{% endblock body_bg %}">
 
-	{% block content %}
+	{% block main %}
 
-	{% endblock content %}
+	{% endblock main %}
 	
     
+	<div class="modal show">
+		<div class="modal-content px-8 py-8">
+			<div class="modal-body">
+				<img src="{% static 'images/logo.png' %}" alt="Logo" class="max-w-44 mx-auto mb-4">
+				<h2 class="text-center font-semibold text-3xl text-black mb-2">Login</h2>
+				<p class="text-center mb-4">Your journey begains here</p>
+
+				<div class="login-form">
+					<div id="recaptcha-container"></div>
+					<div id="send" class="">
+						<input type="text" id="phone-number" class="input rounded-full" placeholder="Enter phone number (e.g., +123456789)">
+						<button id="send-otp-btn" class="btn btn-green w-full py-3 mt-4">Continue with OTP</button>
+					</div>
+				
+					<div id="verify" class="hidden">
+						<input type="text" id="otp-code" class="input" placeholder="Enter OTP">
+						<button id="verify-otp-btn" class="btn btn-blue mt-4">Verify OTP & Login</button>
+					</div>
+					
+					
+					
+					<p id="status-message"></p>
+				</div>
+			</div>
+		</div>
+	</div>
+
     {% block extra_js %}
         
     {% endblock extra_js %}
+	<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+	<script type="module">
+		// --- 1. Initialize Firebase ---
+		// !! Replace with your app's config from Step 1 !!
+		const firebaseConfig = {
+			apiKey: "AIzaSyA8gC4YFyDgluuqqPT1vsW7Ixnv5Cs1YeE",
+			authDomain: "cominity-9cb80.firebaseapp.com",
+			projectId: "cominity-9cb80",
+			storageBucket: "cominity-9cb80.firebasestorage.app",
+			messagingSenderId: "188872172539",
+			appId: "1:188872172539:web:71329f1b9eb073e919615e",
+			measurementId: "G-2797M4MWRN"
+		};
 
+		firebase.initializeApp(firebaseConfig);
+		const auth = firebase.auth();
 
-        
+		// --- 2. Set up reCAPTCHA ---
+		window.onload = function () {
+			window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+				'size': 'invisible',
+				'callback': (response) => {
+					// reCAPTCHA solved, allow send OTP.
+				}
+			});
+
+			// Render the reCAPTCHA and save the widgetID
+			window.recaptchaVerifier.render().then((widgetId) => {
+				window.recaptchaWidgetId = widgetId;
+				console.log("reCAPTCHA rendered, widget ID:", widgetId);
+			}).catch((error) => {
+				console.error("reCAPTCHA render error:", error);
+			});
+		};
+
+		const sendOtpBtn = document.getElementById('send-otp-btn');
+		const verifyOtpBtn = document.getElementById('verify-otp-btn');
+		const phoneNumberInput = document.getElementById('phone-number');
+		const otpInput = document.getElementById('otp-code');
+		const statusMessage = document.getElementById('status-message');
+		const send = document.getElementById('send');
+		const verify = document.getElementById('verify');
+
+		// --- 3. Send OTP Function ---
+		sendOtpBtn.addEventListener('click', () => {
+			const phoneNumber = phoneNumberInput.value;
+			const appVerifier = window.recaptchaVerifier;
+
+			auth.signInWithPhoneNumber(phoneNumber, appVerifier)
+				.then((confirmationResult) => {
+					// SMS sent. Save confirmation result to verify later
+					window.confirmationResult = confirmationResult;
+					statusMessage.textContent = 'OTP sent! Check your phone.';
+					console.log("OTP sent");
+					send.classList.add('hidden');
+					verify.classList.remove('hidden');
+				}).catch((error) => {
+					// Error; SMS not sent
+					statusMessage.textContent = 'Error: ' + error.message;
+					console.error("Error sending OTP", error);
+					// Reset reCAPTCHA
+					grecaptcha.reset(window.recaptchaWidgetId);
+				});
+		});
+
+		// --- 4. Verify OTP and Send Token to Django ---
+		verifyOtpBtn.addEventListener('click', () => {
+			const code = otpInput.value;
+			if (!window.confirmationResult) {
+				statusMessage.textContent = 'Please send OTP first.';
+				return;
+			}
+
+			window.confirmationResult.confirm(code).then((result) => {
+				// User signed in successfully.
+				const user = result.user;
+				statusMessage.textContent = 'Success! Verifying with backend...';
+
+				// // --- 5. Get ID Token and Send to Django ---
+				// user.getIdToken(true).then((idToken) => {
+				// 	// Send this token to your Django backend via fetch
+				// 	sendTokenToBackend(idToken);
+				// }).catch((error) => {
+				// 	statusMessage.textContent = 'Error getting token: ' + error.message;
+				// });
+
+			}).catch((error) => {
+				// User couldn't sign in (e.g., wrong code)
+				statusMessage.textContent = 'Error: Invalid OTP or session expired.';
+				console.error("Verification failed", error);
+			});
+		});
+
+		function sendTokenToBackend(idToken) {
+			// Get the CSRF token for Django
+			const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
+
+			fetch('/api/login/firebase/', { // Your Django API endpoint
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': csrftoken,
+				},
+				body: JSON.stringify({ 'idToken': idToken })
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log('Backend response:', data);
+					if (data.status === 'success') {
+						statusMessage.textContent = 'Login successful! Redirecting...';
+						// Redirect to a members-only page
+						window.location.href = '/dashboard/';
+					} else {
+						statusMessage.textContent = 'Backend verification failed.';
+					}
+				})
+				.catch((error) => {
+					console.error('Error sending token to backend:', error);
+					statusMessage.textContent = 'Error communicating with server.';
+				});
+		}
+	</script>
 </body>
 
 </html>

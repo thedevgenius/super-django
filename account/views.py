@@ -10,6 +10,7 @@ from django.utils import timezone
 
 from .models import User as CustomUser
 from .forms import PhoneForm, OTPForm
+from business.models import Business
 
 
 def generate_otp():
@@ -114,3 +115,31 @@ class ResendOTPView(View):
         # Send via SMS API (placeholder)
         print(f"Resent OTP for {phone}: {otp}")
         return JsonResponse({'success': 'OTP resent successfully'})
+
+
+class UserAccountView(View):
+    template_name = 'accounts/user_account.html'
+
+    def get(self, request):
+        if not request.user.is_authenticated:
+            messages.warning(request, "Please log in to access your account.")
+            return redirect('home')
+
+        return render(request, self.template_name, {'user': request.user})
+    
+
+class MyBusinessesView(View):
+    template_name = 'accounts/my_business.html'
+
+    def get(self, request):
+        if not request.user.is_authenticated:
+            messages.warning(request, "Please log in to access your business dashboard.")
+            return redirect('home')
+        
+        businesses = Business.objects.filter(owner=request.user)
+        context = {
+            'businesses': businesses
+        }
+        print(context)
+
+        return render(request, self.template_name, context)

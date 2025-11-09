@@ -1,110 +1,141 @@
 {% extends 'base.html' %}
 
 
+{% block body_bg %}bg-gray-100{% endblock body_bg %}
+
 {% block content %}
-    <div class="bg-gray-100 text-gray-800">
-        <div class="max-w-3xl mx-auto p-4 sm:p-6 space-y-6">
-        
-            <!-- Banner & Basic Info -->
-            <div class="bg-white rounded-2xl shadow overflow-hidden">
-                <img src="https://source.unsplash.com/800x300/?business,shop" alt="Banner"
-                    class="w-full h-48 sm:h-60 object-cover">
-                <div class="p-4 sm:p-6">
-                    <div class="flex items-center space-x-4">
-                        <img src="https://source.unsplash.com/80x80/?logo" alt="Logo" class="w-16 h-16 rounded-lg border">
-                        <div>
-                            <h1 class="text-2xl font-bold">The Glow Salon</h1>
-                            <p class="text-gray-500 text-sm">Beauty & Wellness · Category: Salon</p>
-                            <div class="flex items-center text-yellow-500 mt-1">
-                                ⭐⭐⭐⭐☆ <span class="text-gray-600 ml-2 text-sm">(120 Reviews)</span>
-                            </div>
-                        </div>
-                    </div>
+    <div class="relative">
+        <img src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1080&auto=format&fit=crop"
+            alt="Business Cover" class="w-full h-56 object-cover" />
+    </div>
+    
+    <!-- Business Info Card -->
+    <div class="bg-white mx-3 -mt-8 relative z-10 rounded-2xl shadow-md p-4">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-xl font-semibold">Sharma Electricians</h2>
+                <p class="text-sm text-gray-500">Electrician • Repairs & Installation</p>
+                <div class="flex items-center gap-2 mt-1 text-sm">
+                    <span
+                        class="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-0.5 rounded-full border border-green-200">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        4.7
+                    </span>
+                    <span class="text-gray-500">• 1.2k reviews</span>
                 </div>
             </div>
-        
-            <!-- About -->
-            <div class="bg-white rounded-2xl shadow p-5">
-                <h2 class="text-lg font-semibold mb-2">About</h2>
-                <p class="text-gray-600 leading-relaxed">
-                    The Glow Salon offers premium hair, skin, and spa treatments using international brands.
-                    Our certified stylists ensure you look your best every day. Located conveniently in South Kolkata.
-                </p>
+        </div>
+    
+        <div class="mt-3 flex items-start gap-2 text-sm text-gray-700">
+            <svg class="w-5 h-5 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 22s8-4.5 8-12A8 8 0 004 10c0 7.5 8 12 8 12z" />
+                <circle cx="12" cy="10" r="3" />
+            </svg>
+            <p>G-12, Market Road, Sector 15, Noida • 1.1 km</p>
+        </div>
+        <div class="mt-1 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+            <span class="text-green-700 font-medium">Open</span>
+            <span class="text-gray-500">• Closes 9:00 PM</span>
+        </div>
+    
+        <!-- Buttons -->
+        <div class="mt-4 flex gap-2">
+            <a href="tel:+9198XXXXXX10"
+                class="flex-1 py-2 border rounded-xl text-center font-medium hover:bg-gray-50">Call</a>
+            <a href="https://wa.me/9198XXXXXX10"
+                class="flex-1 py-2 border rounded-xl text-center font-medium hover:bg-gray-50">WhatsApp</a>
+            <a href="https://maps.google.com/?q=Sharma+Electricians+Noida"
+                class="flex-1 py-2 bg-black text-white rounded-xl font-semibold">Directions</a>
+        </div>
+    </div>
+    
+    <!-- Service Highlights -->
+    <div class="mt-3 mx-3 grid grid-cols-4 gap-2">
+        <div class="bg-white p-3 rounded-xl text-center shadow-sm">
+            <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 border">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12l2 2 4-4M7 21h10a2 2 0 002-2V7l-5-5H7a2 2 0 00-2 2v15a2 2 0 002 2z" />
+                </svg>
             </div>
-        
-            <!-- Contact & Location -->
-            <div class="bg-white rounded-2xl shadow p-5 space-y-3">
-                <h2 class="text-lg font-semibold mb-2">Contact & Location</h2>
-                <div class="text-gray-700 space-y-1">
-                    <p>📞 <span class="font-medium">+91 9876543210</span></p>
-                    <p>💬 WhatsApp: +91 9876543210</p>
-                    <p>✉️ hello@glowsalon.in</p>
-                    <p>📍 21 Park Street, South Kolkata, 700016</p>
-                </div>
-                <div class="mt-3">
-                    <div class="w-full h-40 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 text-sm">
-                        🗺️ Map Preview (Google Maps Embed Later)
-                    </div>
-                </div>
+            <div class="mt-1 text-xs font-medium">Verified</div>
+        </div>
+        <div class="bg-white p-3 rounded-xl text-center shadow-sm">
+            <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 border">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 8v4l3 3M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                </svg>
             </div>
-        
-            <!-- Opening Hours -->
-            <div class="bg-white rounded-2xl shadow p-5">
-                <h2 class="text-lg font-semibold mb-2">Opening Hours</h2>
-                <ul class="text-gray-700 text-sm grid grid-cols-2 sm:grid-cols-3 gap-y-1">
-                    <li>Mon: 9 AM – 9 PM</li>
-                    <li>Tue: 9 AM – 9 PM</li>
-                    <li>Wed: 9 AM – 9 PM</li>
-                    <li>Thu: 9 AM – 9 PM</li>
-                    <li>Fri: 9 AM – 10 PM</li>
-                    <li>Sat: 10 AM – 10 PM</li>
-                    <li>Sun: 10 AM – 8 PM</li>
-                </ul>
+            <div class="mt-1 text-xs font-medium">Quick</div>
+        </div>
+        <div class="bg-white p-3 rounded-xl text-center shadow-sm">
+            <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 border">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2 4 4L21 4" />
+                </svg>
             </div>
-        
-            <!-- Services -->
-            <div class="bg-white rounded-2xl shadow p-5">
-                <h2 class="text-lg font-semibold mb-3">Services</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-                    <div class="bg-gray-50 p-2 rounded-lg text-center shadow-sm">Haircut & Styling</div>
-                    <div class="bg-gray-50 p-2 rounded-lg text-center shadow-sm">Facial Treatments</div>
-                    <div class="bg-gray-50 p-2 rounded-lg text-center shadow-sm">Spa & Massage</div>
-                    <div class="bg-gray-50 p-2 rounded-lg text-center shadow-sm">Manicure / Pedicure</div>
-                    <div class="bg-gray-50 p-2 rounded-lg text-center shadow-sm">Hair Coloring</div>
-                </div>
+            <div class="mt-1 text-xs font-medium">24/7</div>
+        </div>
+        <div class="bg-white p-3 rounded-xl text-center shadow-sm">
+            <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 border">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 12h13M15 12l-3-3m3 3l-3 3M19 5v14" />
+                </svg>
             </div>
-        
-            <!-- Gallery -->
-            <div class="bg-white rounded-2xl shadow p-5">
-                <h2 class="text-lg font-semibold mb-3">Gallery</h2>
-                <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                    <img src="https://source.unsplash.com/150x150/?salon,hair" class="rounded-lg object-cover w-full h-24">
-                    <img src="https://source.unsplash.com/150x150/?spa" class="rounded-lg object-cover w-full h-24">
-                    <img src="https://source.unsplash.com/150x150/?beauty" class="rounded-lg object-cover w-full h-24">
-                    <img src="https://source.unsplash.com/150x150/?makeup" class="rounded-lg object-cover w-full h-24">
+            <div class="mt-1 text-xs font-medium">On-site</div>
+        </div>
+    </div>
+    
+    <!-- Key Information -->
+    <div class="mt-3 mx-3 bg-white rounded-2xl shadow-sm p-4">
+        <h3 class="font-semibold text-lg mb-2">Key Information</h3>
+        <div class="text-sm space-y-2">
+            <div><span class="font-medium text-gray-700">Services:</span> Wiring, Lighting, Appliance Fitting, Emergency
+                Repair</div>
+            <div><span class="font-medium text-gray-700">Languages:</span> English, Hindi</div>
+            <div><span class="font-medium text-gray-700">Payment Modes:</span> UPI, Card, Cash</div>
+            <div><span class="font-medium text-gray-700">Service Area:</span> Within 10 km radius</div>
+        </div>
+    </div>
+    
+    <!-- About / Info -->
+    <div class="mt-3 mx-3 bg-white rounded-2xl shadow-sm p-4">
+        <h3 class="font-semibold text-lg mb-2">About</h3>
+        <p class="text-sm text-gray-700">
+            Sharma Electricians provide reliable electrical services across Noida.
+            We handle new installations, rewiring, appliance fittings, and emergency breakdowns
+            with trained professionals and genuine parts.
+        </p>
+    
+        <div class="mt-3 text-sm space-y-2">
+            <div><span class="font-medium text-gray-700">Working Hours:</span> 8:00 AM – 9:00 PM</div>
+            <div><span class="font-medium text-gray-700">Price Range:</span> ₹199 – ₹1,999</div>
+            <div><span class="font-medium text-gray-700">Contact:</span> +91 98XXXXXX10</div>
+        </div>
+    </div>
+    
+    <!-- Reviews -->
+    <div class="mt-3 mx-3 bg-white rounded-2xl shadow-sm p-4">
+        <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-lg">Ratings & Reviews</h3>
+            <a href="#" class="text-sm text-indigo-600 font-medium">See all</a>
+        </div>
+        <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center">AK</div>
+            <div class="flex-1">
+                <div class="flex items-center gap-2 text-sm">
+                    <span class="font-medium">Amit Kumar</span>
+                    <span class="text-gray-500">• 2 days ago</span>
                 </div>
+                <div class="text-yellow-500 text-sm">★★★★★</div>
+                <p class="text-sm text-gray-700 mt-0.5">Quick wiring fix and neat work. Recommended!</p>
             </div>
-        
-            <!-- Reviews -->
-            <div class="bg-white rounded-2xl shadow p-5 space-y-4">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-lg font-semibold">Customer Reviews</h2>
-                    <button class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-700">Write
-                        Review</button>
-                </div>
-                <div class="space-y-3">
-                    <div class="border-b pb-2">
-                        <p class="font-semibold text-gray-800">Ananya Saha <span class="text-yellow-500 ml-1">⭐⭐⭐⭐⭐</span>
-                        </p>
-                        <p class="text-gray-600 text-sm">Great service and ambience. Totally worth it!</p>
-                    </div>
-                    <div class="border-b pb-2">
-                        <p class="font-semibold text-gray-800">Rahul Dey <span class="text-yellow-500 ml-1">⭐⭐⭐⭐</span></p>
-                        <p class="text-gray-600 text-sm">Very professional staff. A bit pricey but worth the quality.</p>
-                    </div>
-                </div>
-            </div>
-        
         </div>
     </div>
 {% endblock content %}

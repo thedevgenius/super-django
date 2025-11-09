@@ -71,7 +71,7 @@ class Business(models.Model):
     is_verified = models.BooleanField(default=False)
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='draft')
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='published')
     
     # SEO & Search Boosting
     meta_title = models.CharField(max_length=255, blank=True, null=True)
