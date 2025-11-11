@@ -2,7 +2,7 @@
 import random
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.views import View
 from django.core.cache import cache
 from django.http import JsonResponse
@@ -11,6 +11,8 @@ from django.utils import timezone
 from .models import User as CustomUser
 from .forms import PhoneForm, OTPForm
 from business.models import Business
+
+import json
 
 
 def generate_otp():
@@ -45,51 +47,35 @@ class SendOTPView(View):
 class VerifyOTPView(View):
     template_name = 'accounts/verify_otp.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        """
-        Prevents direct access to /verify-otp/ unless phone exists in session.
-        Works for both GET and POST.
-        """
-        phone = request.session.get('phone')
-        if not phone:
-            messages.warning(request, "Please enter your phone number first.")
-            return redirect('send-otp')
-        return super().dispatch(request, *args, **kwargs)
+    # def dispatch(self, request, *args, **kwargs):
+    #     """
+    #     Prevents direct access to /verify-otp/ unless phone exists in session.
+    #     Works for both GET and POST.
+    #     """
+    #     phone = request.session.get('phone')
+    #     if not phone:
+    #         messages.warning(request, "Please enter your phone number first.")
+    #         return redirect('send-otp')
+    #     return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request):
-        form = OTPForm()
-        phone = request.session.get('phone')
-        return render(request, self.template_name, {'form': form, 'phone': phone})
+    # def get(self, request):
+    #     form = OTPForm()
+    #     phone = request.session.get('phone')
+    #     return render(request, self.template_name, {'form': form, 'phone': phone})
 
     def post(self, request):
-        form = OTPForm(request.POST)
-        phone = request.session.get('phone')
-
-        if not phone:
-            messages.error(request, "Session expired. Try again.")
-            return redirect('send-otp')
-
-        if form.is_valid():
-            otp_entered = form.cleaned_data['otp']
-            otp_stored = cache.get(f"otp_{phone}")
-
-            if otp_stored and otp_entered == otp_stored:
-                user, created = CustomUser.objects.get_or_create(phone=phone)
-                user.is_phone_verified = True
-                user.save()
-
-                login(request, user)
-                cache.delete(f"otp_{phone}")
-                cache.delete(f"otp_time_{phone}")
-
-                # Optional cleanup — remove phone from session after login
-                del request.session['phone']
-
-                messages.success(request, "Logged in successfully!")
-                return redirect('home')
-            else:
-                messages.error(request, "Invalid or expired OTP.")
-        return render(request, self.template_name, {'form': form, 'phone': phone})
+        data = json.loads(request.body)
+        phone = data.get('phone', '')
+        phone = (phone or '').strip()
+        if phone.startswith('+91'):
+            phone = phone[3:].strip()
+        print(phone)
+        user, created = CustomUser.objects.get_or_create(phone=phone)
+        user.is_phone_verified = True
+        user.save()
+        login(request, user)
+        print(f"User {phone} logged in.")
+        return JsonResponse({'success': True, 'message': 'Phone number verified and user logged in.'})
 
 
 class ResendOTPView(View):
@@ -116,6 +102,11 @@ class ResendOTPView(View):
         print(f"Resent OTP for {phone}: {otp}")
         return JsonResponse({'success': 'OTP resent successfully'})
 
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        messages.success(request, "You have been logged out.")
+        return redirect('home')
 
 class UserAccountView(View):
     template_name = 'accounts/user_account.html'
