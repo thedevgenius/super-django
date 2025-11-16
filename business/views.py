@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 class CategoryListView(View):
     def get(self, request):
         categories = Category.objects.filter(is_active=True, level=1)
+        print(categories)
         return render(request, 'business/category_list.html', {'categories': categories})
 
 
